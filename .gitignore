@@ -1,0 +1,30 @@
+# Build results
+[Bb]in/
+[Oo]bj/
+
+# Visual Studio files
+.vs/
+*.user
+*.userosscache
+*.sln.docstates
+
+# Rider
+.idea/
+
+# VS Code
+.vscode/
+
+# Environment files
+appsettings.Development.json
+*.env
+
+# NuGet Packages
+*.nupkg
+packages/
+
+# Project-specific exclusions
+publish/
+publish_final/
+publish_final_v2/
+*.zip
+web.config
