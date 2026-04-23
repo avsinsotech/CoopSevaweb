@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Portal Login - Swift Ckyc</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #001e46;
+            --primary-blue-light: #003a7d;
+            --accent-gold: #d4a017;
+            --accent-gold-hover: #b88a10;
+            --text-white: #ffffff;
+            --text-muted: #a0aec0;
+            --error-red: #f56565;
+            --glass-bg: rgba(255, 255, 255, 0.95);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, #002D62 100%);
+            display: flex;
+            height: 100vh;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Abstract background patterns for premium feel */
+        body::before {
+            content: "";
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(212, 160, 23, 0.1) 0%, transparent 70%);
+            top: -100px;
+            right: -100px;
+            z-index: 0;
+        }
+
+        body::after {
+            content: "";
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(0, 58, 125, 0.3) 0%, transparent 70%);
+            bottom: -150px;
+            left: -150px;
+            z-index: 0;
+        }
+
+        .login-card {
+            background: var(--glass-bg);
+            border-radius: 16px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            width: 420px;
+            padding: 50px 40px;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo-area {
+            margin-bottom: 40px;
+        }
+
+        .logo-area h1 {
+            color: var(--primary-blue);
+            margin: 0;
+            font-size: 26px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            text-transform: uppercase;
+        }
+
+        .logo-area .divider {
+            height: 3px;
+            width: 40px;
+            background-color: var(--accent-gold);
+            margin: 12px auto;
+            border-radius: 2px;
+        }
+
+        .logo-area p {
+            color: #4a5568;
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            opacity: 0.8;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 15px;
+            color: #1a202c;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-blue-light);
+            box-shadow: 0 0 0 4px rgba(0, 58, 125, 0.1);
+        }
+
+        .btn-login {
+            background-color: var(--primary-blue);
+            color: white;
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-login:hover {
+            background-color: #00306b;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        .btn-login:disabled {
+            background-color: #718096;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .error-message {
+            color: var(--error-red);
+            font-size: 13px;
+            font-weight: 500;
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(245, 101, 101, 0.1);
+            border-radius: 8px;
+            display: none;
+            animation: shake 0.4s ease-in-out;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px);
+            }
+
+            75% {
+                transform: translateX(5px);
+            }
+        }
+
+        .footer-info {
+            margin-top: 30px;
+            font-size: 11px;
+            color: #718096;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .secure-badge {
+            background: #edf2f7;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            color: #4a5568;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* SVG Icon styling */
+        .icon {
+            width: 14px;
+            height: 14px;
+            fill: currentColor;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="login-card">
+        <div class="logo-area">
+            <!-- Dynamic Bank Branding (Official Seal Style) -->
+            <div id="bankBrandingLogin"
+                style="margin-bottom: 25px; transition: all 0.6s ease-out; opacity: 0; display: flex; flex-direction: column; align-items: center; gap: 10px; background: #f8fafc; padding: 15px; border-radius: 16px; border: 1px solid #e2e8f0; width: 100%;">
+                <img id="loginBankLogo" src="" alt=""
+                    style="max-height: 55px; display: none; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.05));">
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <h1 id="loginBankName"
+                        style="margin: 0; font-size: 20px; font-weight: 800; color: #001f3f; letter-spacing: 0.8px; text-transform: uppercase; text-align: center; line-height: 1.1;">
+                        LOADING...
+                    </h1>
+                    <span style="font-size: 10px; font-weight: 700; color: #94a3b8; letter-spacing: 2px; text-transform: uppercase; margin-top: 4px;">
+                        BANKING SYSTEM
+                    </span>
+                </div>
+            </div>
+
+            <div style="font-size: 34px; letter-spacing: -1px; display: flex; align-items: center; justify-content: center; margin-bottom: 5px;">
+                <span style="font-weight: 800; color: var(--primary-blue);">SWIFT</span>
+                <span style="font-weight: 300; color: var(--accent-gold); margin-left: 4px;">360</span>
+            </div>
+            <div class="divider"></div>
+            <p style="text-transform: uppercase; letter-spacing: 2px; font-weight: 600; font-size: 12px; color: #718096;">Bank Portal</p>
+        </div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="userid">Admin Identification</label>
+                <div class="input-wrapper">
+                    <input type="text" id="userid" class="form-control" placeholder="Enter your ID" required
+                        autocomplete="username">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Security Password</label>
+                <div class="input-wrapper">
+                    <input type="password" id="password" class="form-control" placeholder="••••••••" required
+                        autocomplete="current-password">
+                </div>
+            </div>
+
+            <button type="submit" class="btn-login" id="loginBtn">
+                <svg class="icon" viewBox="0 0 20 20">
+                    <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                    <path fill-rule="evenodd"
+                        d="M5 8V6a5 5 0 0110 0v2h1a2 2 0 012 2v5a2 2 0 01-2 2H4a2 2 0 01-2-2v-5a2 2 0 012-2h1zm9 0V6a4 4 0 00-8 0v2h8z"
+                        clip-rule="evenodd" />
+                </svg>
+                Secure Entrance
+            </button>
+
+            <div id="errorMsg" class="error-message">Invalid credentials. Please try again.</div>
+        </form>
+
+        <div class="footer-info">
+            <span class="secure-badge">
+                <svg class="icon" style="width:10px;height:10px;" viewBox="0 0 20 20">
+                    <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                    <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                </svg>
+                SSL SECURE
+            </span>
+            &bull;
+            <span>AES-256 Protected</span>
+        </div>
+    </div>
+
+    <script>
+        // Fetch Bank Details (Logo & Name)
+        async function fetchBankDetails() {
+            try {
+                const res = await fetch('/api/Admin/bank-details');
+                const data = await res.json();
+                if (data.success && data.data) {
+                    const bank = data.data;
+                    const nameEl = document.getElementById('loginBankName');
+                    const logoEl = document.getElementById('loginBankLogo');
+                    const container = document.getElementById('bankBrandingLogin');
+
+                    // Try both common casings (camelCase vs PascalCase)
+                    const bankName = bank.bankname || bank.Bankname || '';
+                    const logoData = bank.logoBase64 || bank.LogoBase64 || '';
+
+                    if (bankName) {
+                        nameEl.innerText = bankName;
+                    }
+
+                    if (logoData) {
+                        // Check if it already has the data:image prefix
+                        if (logoData.startsWith('data:')) {
+                            logoEl.src = logoData;
+                        } else {
+                            // Default to PNG but modern browsers are forgiving
+                            logoEl.src = `data:image/png;base64,${logoData}`;
+                        }
+                        logoEl.style.display = 'block';
+                    }
+
+                    container.style.opacity = '1';
+                }
+            } catch (e) { console.error("Error fetching bank details", e); }
+        }
+
+        // Initialize branding on load
+        fetchBankDetails();
+
+        document.getElementById('loginForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const userid = document.getElementById('userid').value;
+            const password = document.getElementById('password').value;
+            const btn = document.getElementById('loginBtn');
+            const errorMsg = document.getElementById('errorMsg');
+
+            btn.disabled = true;
+            btn.innerHTML = '<span style="opacity: 0.7">Processing...</span>';
+            errorMsg.style.display = 'none';
+
+            try {
+                const response = await fetch('/api/Admin/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ UserID: userid, Password: password })
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    localStorage.setItem('isAdminLoggedIn', 'true');
+                    localStorage.setItem('userRole', data.role);
+                    localStorage.setItem('adminId', data.userId);
+                    localStorage.setItem('username', data.username);
+                    // Smooth transition
+                    document.querySelector('.login-card').style.opacity = '0';
+                    document.querySelector('.login-card').style.transition = 'opacity 0.5s';
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 500);
+                } else {
+                    errorMsg.innerText = data.message || 'Access Denied: Invalid Security Credentials';
+                    errorMsg.style.display = 'block';
+                }
+            } catch (error) {
+                errorMsg.innerText = 'Infrastructure error: Server unreachable.';
+                errorMsg.style.display = 'block';
+            }
+
+            btn.disabled = false;
+            btn.innerHTML = '<svg class="icon" viewBox="0 0 20 20"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/><path fill-rule="evenodd" d="M5 8V6a5 5 0 0110 0v2h1a2 2 0 012 2v5a2 2 0 01-2 2H4a2 2 0 01-2-2v-5a2 2 0 012-2h1zm9 0V6a4 4 0 00-8 0v2h8z" clip-rule="evenodd"/></svg> Secure Entrance';
+        });
+    </script>
+
+</body>
+
+</html>
